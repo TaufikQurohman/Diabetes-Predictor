@@ -1,0 +1,19 @@
+{
+  "model_name": "Gradient Boosting",
+  "features": [
+    "Pregnancies",
+    "Glucose",
+    "BloodPressure",
+    "SkinThickness",
+    "Insulin",
+    "BMI",
+    "DiabetesPedigreeFunction",
+    "Age"
+  ],
+  "accuracy": 0.8831168831168831,
+  "f1_score": 0.8301886792452831,
+  "roc_auc": 0.9551851851851851,
+  "optimal_threshold": 0.3680827382216608,
+  "train_size": 614,
+  "test_size": 154
+}
