@@ -378,8 +378,14 @@ if predict_btn:
         if "bawah" in val:  return "color:#EF9F27; font-weight:600"
         return "color:#1D9E75; font-weight:600"
 
+    styled_display = df_display.style
+    if hasattr(styled_display, "map"):
+        styled_display = styled_display.map(style_status, subset=['Status'])
+    else:
+        styled_display = styled_display.applymap(style_status, subset=['Status'])
+
     st.dataframe(
-        df_display.style.applymap(style_status, subset=['Status']),
+        styled_display,
         use_container_width=True, hide_index=True
     )
 
