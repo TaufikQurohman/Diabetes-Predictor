@@ -3,9 +3,13 @@ import pandas as pd
 import numpy as np
 import joblib
 import json
+from pathlib import Path
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import matplotlib.gridspec as gridspec
+
+BASE_DIR = Path(__file__).resolve().parent
+MODEL_DIR = BASE_DIR / "model"
 
 # ─────────────────────────────────────────────
 #  Konfigurasi halaman
@@ -105,14 +109,14 @@ st.markdown("""
 # ─────────────────────────────────────────────
 @st.cache_resource
 def load_model():
-    model  = joblib.load('model/model.pkl')
-    scaler = joblib.load('model/scaler.pkl')
+    model  = joblib.load(MODEL_DIR / 'model.pkl')
+    scaler = joblib.load(MODEL_DIR / 'scaler.pkl')
     return model, scaler
 
 @st.cache_data
 def load_metadata():
     try:
-        with open('model/metadata.json') as f:
+        with open(MODEL_DIR / 'metadata.json') as f:
             return json.load(f)
     except FileNotFoundError:
         return {
@@ -124,7 +128,19 @@ def load_metadata():
                          'Insulin','BMI','DiabetesPedigreeFunction','Age']
         }
 
-model, scaler = load_model()
+try:
+    model, scaler = load_model()
+except ModuleNotFoundError as exc:
+    st.error(
+        "Model gagal dimuat karena dependency Python yang dibutuhkan tidak tersedia. "
+        "Pastikan Streamlit Cloud memakai `runtime.txt` dan install ulang dependency dari `requirements.txt`."
+    )
+    st.exception(exc)
+    st.stop()
+except Exception as exc:
+    st.error("Model gagal dimuat. Periksa file `model/model.pkl`, `model/scaler.pkl`, dan dependency aplikasi.")
+    st.exception(exc)
+    st.stop()
 meta = load_metadata()
 THRESHOLD = meta.get('optimal_threshold', 0.5)
 FEATURES  = meta.get('features', [])
